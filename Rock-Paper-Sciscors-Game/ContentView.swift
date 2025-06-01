@@ -16,8 +16,10 @@ struct ContentView: View {
     @State private var score = 0
     @State private var compChoice = Int.random(in: 0...2)
     @State private var questionNumber = 1
+    @State private var totalQuestions = 10
     @State private var maxQuestions = false
     @State private var animate = false
+    @State private var continueGameOption = false
     var body: some View {
         ZStack{
             Circle()
@@ -67,10 +69,10 @@ struct ContentView: View {
                         }
                     }
                 }
-                Text("Play No: \(questionNumber)/10")
+                Text("Play No: \(questionNumber)/\(totalQuestions)")
                     .font(.title.bold())
                     .padding(2)
-                Text("Score: \(score)/10")
+                Text("Score: \(score)/\(totalQuestions)")
                     .font(.title.bold())
                     .padding(2)
 //                Spacer()
@@ -83,9 +85,9 @@ struct ContentView: View {
                     Do you wish to restart?
                     """, isPresented: $maxQuestions) {
                     Button("Restart", action: replayGame)
-        //            questionNumber = 1
+                    Button("No, Continue",action: continueGame)
                 } message: {
-                    Text("You got a score of \(score)/10")
+                    Text("You got a score of \(score)/\(totalQuestions)")
                 }
     }
     
@@ -99,21 +101,28 @@ struct ContentView: View {
                 score += 1
             }
         }
-        if questionNumber == 10 {
+        if (questionNumber % 10 == 0)  {
             maxQuestions = true
             return
-            
         }
-        replayGame()
+        continueGameOption ? continueGame() : replayGame()
     }
     func replayGame() {
         compChoice = Int.random(in: 0...2)
         result.toggle()
         questionNumber += 1
         if maxQuestions {
+            totalQuestions = 10
             questionNumber = 1
             score = 0
         }
+    }
+    func continueGame() {
+        compChoice = Int.random(in: 0...2)
+        result.toggle()
+        questionNumber += 1
+        totalQuestions += 1
+        continueGameOption = true
     }
 }
 
